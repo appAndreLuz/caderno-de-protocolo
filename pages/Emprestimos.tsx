@@ -12,7 +12,8 @@ import {
   Printer, 
   FileDown, 
   Eye, 
-  FileText 
+  FileText,
+  BookOpen
 } from 'lucide-react';
 
 declare var html2pdf: any;
@@ -48,7 +49,6 @@ const Emprestimos: React.FC = () => {
       if (error) throw error;
       setItems(data || []);
       
-      // Calculate next sequence
       const { data: lastItem } = await supabase
         .from('emprestimos')
         .select('numero_sequencial')
@@ -83,13 +83,14 @@ const Emprestimos: React.FC = () => {
   };
 
   const formatProtocol = (seq: number) => {
-    return `Termo de Empréstimo ${String(seq).padStart(2, '0')}/2026`;
+    const year = new Date().getFullYear();
+    return `Protocolo de Empréstimo #${String(seq).padStart(3, '0')}/${year}`;
   };
 
   const handlePreview = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.fornecedor_nome || !formData.item_nome || !formData.data_emprestimo) {
-      setFormError('Preencha todos os campos obrigatórios.');
+      setFormError('Preencha os campos obrigatórios (*).');
       return;
     }
     setIsPreviewOpen(true);
@@ -108,7 +109,7 @@ const Emprestimos: React.FC = () => {
       const { error } = await supabase.from('emprestimos').insert([payload]);
       
       if (error) {
-        if (error.code === '23505') throw new Error("Número de protocolo duplicado.");
+        if (error.code === '23505') throw new Error("Conflito de numeração de protocolo.");
         throw error;
       }
 
@@ -116,7 +117,7 @@ const Emprestimos: React.FC = () => {
       setIsModalOpen(false);
       fetchEmprestimos();
     } catch (err: any) {
-      setFormError(err.message || 'Erro ao gravar empréstimo.');
+      setFormError(err.message || 'Erro ao gravar registro.');
     }
   };
 
@@ -125,10 +126,10 @@ const Emprestimos: React.FC = () => {
     if (!element) return;
 
     const opt = {
-      margin: 15,
-      filename: `Termo_Emprestimo_${nextSeq}_2026.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
+      margin: [15, 15, 15, 15],
+      filename: `Termo_Emprestimo_${nextSeq}.pdf`,
+      image: { type: 'jpeg', quality: 1 },
+      html2canvas: { scale: 3 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
@@ -141,14 +142,14 @@ const Emprestimos: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 tracking-tight uppercase">Empréstimos</h1>
-          <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-1">Gestão de termos e comodatos de equipamentos</p>
+          <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest mt-1">Gestão de termos e comodatos</p>
         </div>
         <button 
           onClick={openModal}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl flex items-center justify-center space-x-2 transition-all shadow-xl shadow-blue-500/20 active:scale-95 text-xs font-black uppercase tracking-widest"
         >
           <Plus size={18} />
-          <span>Novo Termo</span>
+          <span>Criar Novo Termo</span>
         </button>
       </div>
 
@@ -158,7 +159,7 @@ const Emprestimos: React.FC = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={18} />
             <input 
               type="text" 
-              placeholder="Pesquisar por fornecedor ou item..." 
+              placeholder="Pesquisar por destinatário ou item..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 transition-all text-black text-xs font-bold uppercase tracking-wider"
@@ -171,10 +172,10 @@ const Emprestimos: React.FC = () => {
             <thead className="bg-gray-50/50 text-gray-400 text-[10px] uppercase tracking-widest font-black">
               <tr>
                 <th className="px-8 py-4">Protocolo</th>
-                <th className="px-8 py-4">Beneficiário</th>
-                <th className="px-8 py-4">Item</th>
-                <th className="px-8 py-4">Data</th>
-                <th className="px-8 py-4 text-center">Status</th>
+                <th className="px-8 py-4">Destinatário</th>
+                <th className="px-8 py-4">Item/Equipamento</th>
+                <th className="px-8 py-4">Data Emissão</th>
+                <th className="px-8 py-4 text-center">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 text-[12px]">
@@ -191,12 +192,12 @@ const Emprestimos: React.FC = () => {
               ) : (
                 items.map((item) => (
                   <tr key={item.id} className="hover:bg-blue-50/30 transition-colors">
-                    <td className="px-8 py-4 font-black text-gray-900 tracking-tighter uppercase">{formatProtocol(item.numero_sequencial)}</td>
+                    <td className="px-8 py-4 font-black text-gray-900 tracking-tighter uppercase">Termo #{item.numero_sequencial}</td>
                     <td className="px-8 py-4 text-gray-800 uppercase font-black">{item.fornecedor_nome}</td>
                     <td className="px-8 py-4 text-gray-500 font-bold">{item.item_nome}</td>
                     <td className="px-8 py-4 font-bold text-gray-400">{formatDate(item.data_emprestimo)}</td>
                     <td className="px-8 py-4 text-center">
-                      <span className="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-tighter">Emitido</span>
+                       <span className="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-tighter">Ativo</span>
                     </td>
                   </tr>
                 ))
@@ -206,7 +207,6 @@ const Emprestimos: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal Cadastro */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
@@ -219,7 +219,7 @@ const Emprestimos: React.FC = () => {
             </div>
             <form onSubmit={handlePreview} className="p-8 space-y-5">
               <div>
-                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Número do Protocolo</label>
+                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Protocolo Sequencial</label>
                 <input 
                   type="text" 
                   value={formatProtocol(nextSeq)}
@@ -228,9 +228,10 @@ const Emprestimos: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Fornecedor Beneficiado *</label>
+                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Destinatário *</label>
                 <input 
                   type="text" 
+                  placeholder="Nome da Instituição ou Pessoa"
                   value={formData.fornecedor_nome}
                   onChange={(e) => setFormData({...formData, fornecedor_nome: e.target.value})}
                   className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-black font-bold text-xs uppercase"
@@ -238,17 +239,18 @@ const Emprestimos: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Item Emprestado *</label>
+                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Item para Empréstimo *</label>
                 <input 
                   type="text" 
+                  placeholder="Ex: 05 unid. de Papel Termossensível"
                   value={formData.item_nome}
                   onChange={(e) => setFormData({...formData, item_nome: e.target.value})}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-black font-bold text-xs"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-black font-bold text-xs uppercase"
                   required
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Data do Empréstimo *</label>
+                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Data de Emissão *</label>
                 <input 
                   type="date" 
                   value={formData.data_emprestimo}
@@ -258,11 +260,12 @@ const Emprestimos: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Observações Adicionais</label>
+                <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Observações</label>
                 <textarea 
                   value={formData.observacoes}
+                  placeholder="Instruções ou restrições..."
                   onChange={(e) => setFormData({...formData, observacoes: e.target.value})}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl h-24 resize-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 outline-none text-black text-xs italic"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl h-24 resize-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 outline-none text-black text-xs font-bold uppercase"
                 />
               </div>
               
@@ -281,7 +284,7 @@ const Emprestimos: React.FC = () => {
                   className="flex-1 px-6 py-4 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 font-black uppercase tracking-widest text-[11px] active:scale-95 flex items-center justify-center space-x-2"
                 >
                   <Eye size={16} />
-                  <span>Visualizar Termo</span>
+                  <span>Ver Documento</span>
                 </button>
               </div>
             </form>
@@ -289,62 +292,77 @@ const Emprestimos: React.FC = () => {
         </div>
       )}
 
-      {/* Modal Preview Termo */}
       {isPreviewOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-gray-900/80 backdrop-blur-sm" onClick={() => setIsPreviewOpen(false)}></div>
-          <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl z-10 overflow-hidden animate-scaleIn flex flex-col h-[90vh]">
-            <div className="p-6 border-b flex justify-between items-center bg-gray-50/50 shrink-0">
-              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight">Visualização do Termo</h3>
+          <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl z-10 overflow-hidden animate-scaleIn flex flex-col h-[85vh]">
+            <div className="p-6 border-b flex justify-between items-center bg-gray-50/50">
+              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight">Pré-visualização</h3>
               <button onClick={() => setIsPreviewOpen(false)} className="text-gray-400 hover:text-gray-900">
                 <X size={24} />
               </button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
-               <div id="termo-document" className="bg-white text-black font-serif leading-loose text-justify p-8 border border-gray-100">
-                  <div className="text-center mb-12">
-                     <h2 className="text-2xl font-black uppercase tracking-widest border-b-2 border-gray-900 pb-2 mb-4">TERMO DE EMPRÉSTIMO</h2>
-                     <p className="text-sm font-bold">{formatProtocol(nextSeq)}</p>
+            <div className="flex-1 overflow-y-auto p-12 bg-gray-100">
+               <div id="termo-document" className="bg-white p-12 shadow-sm rounded-lg min-h-full font-sans">
+                  <div className="flex justify-center mb-10">
+                    <div className="bg-blue-600 text-white p-3 rounded-2xl">
+                       <Handshake size={32} />
+                    </div>
                   </div>
                   
-                  <div className="space-y-8 text-lg">
-                    <p>
-                      Pelo presente termo, declaro que o item <span className="font-black italic">"{formData.item_nome}"</span> foi emprestado ao fornecedor <span className="font-black uppercase">"{formData.fornecedor_nome}"</span>, na data de <span className="font-black underline">{formatDate(formData.data_emprestimo)}</span>, ficando este responsável pela guarda, uso e devolução do referido item, nas condições acordadas entre as partes.
-                    </p>
+                  <div className="text-center mb-10">
+                    <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter mb-2">Termo de Empréstimo</h2>
+                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{formatProtocol(nextSeq)}</p>
+                  </div>
 
+                  <div className="space-y-6 text-sm text-gray-700 leading-relaxed">
+                    <p>
+                      Pelo presente instrumento, o **Almoxarifado Central** formaliza o empréstimo do item/equipamento: 
+                      <span className="font-black text-gray-900 uppercase ml-1 underline">"{formData.item_nome}"</span>.
+                    </p>
+                    <p>
+                      O item mencionado acima foi retirado por/para: 
+                      <span className="font-black text-gray-900 uppercase ml-1">"{formData.fornecedor_nome}"</span>, 
+                      ficando sob sua inteira responsabilidade até a devolução formal.
+                    </p>
+                    
                     {formData.observacoes && (
-                      <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 font-sans text-sm italic">
-                        <span className="font-black uppercase not-italic block mb-2 text-gray-400 text-[10px] tracking-widest">Observações Adicionais:</span>
+                      <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 italic">
+                        <span className="font-black uppercase text-[10px] text-gray-400 block mb-1">Notas:</span>
                         {formData.observacoes}
                       </div>
                     )}
 
-                    <div className="mt-20 pt-10 space-y-16">
-                      <p className="text-center">Local e data: ___________________________, {formatDate(formData.data_emprestimo)}</p>
-                      
-                      <div className="flex flex-col items-center pt-10">
-                        <div className="w-80 h-[1px] bg-gray-900 mb-2"></div>
-                        <p className="text-sm font-bold uppercase tracking-widest">Assinatura do responsável pelo empréstimo</p>
+                    <div className="pt-12 grid grid-cols-2 gap-12">
+                      <div className="border-t border-gray-200 pt-2 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Responsável p/ Retirada</p>
                       </div>
+                      <div className="border-t border-gray-200 pt-2 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Gerência de Almoxarifado</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-8 text-center text-[10px] text-gray-300 font-black uppercase tracking-widest">
+                       Data de Emissão: {formatDate(formData.data_emprestimo)}
                     </div>
                   </div>
                </div>
             </div>
 
-            <div className="p-8 bg-gray-50 border-t shrink-0 flex space-x-4">
+            <div className="p-8 bg-gray-50 border-t flex space-x-4">
               <button 
                 onClick={() => setIsPreviewOpen(false)}
                 className="flex-1 py-4 text-gray-400 font-black uppercase tracking-widest text-[10px] hover:text-gray-900"
               >
-                Voltar e Editar
+                Voltar e Corrigir
               </button>
               <button 
                 onClick={handlePrint}
-                className="flex-1 py-4 bg-gray-900 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl active:scale-95 transition-all flex items-center justify-center space-x-2"
+                className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center space-x-2"
               >
                 <Printer size={18} />
-                <span>Emitir e Imprimir</span>
+                <span>Salvar e Imprimir</span>
               </button>
             </div>
           </div>

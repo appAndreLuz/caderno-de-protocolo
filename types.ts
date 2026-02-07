@@ -24,6 +24,7 @@ export interface NAF {
 
 export interface Medicamento {
   id: string;
+  codigo: string;
   nome: string;
   lote: string;
   validade: string;

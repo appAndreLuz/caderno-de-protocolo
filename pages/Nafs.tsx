@@ -316,16 +316,16 @@ const Nafs: React.FC = () => {
             <form onSubmit={handleSubmit} className="p-8 grid grid-cols-2 gap-5">
               <div className="col-span-1">
                 <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Data Entrada *</label>
-                <input type="date" value={formData.data_entrada} onChange={(e) => setFormData({...formData, data_entrada: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-black font-bold text-xs" required />
+                <input type="date" value={formData.data_entrada} onChange={(e) => setFormData({...formData, data_entrada: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-black font-bold text-xs uppercase" required />
               </div>
               <div className="col-span-1 flex space-x-2">
                 <div className="flex-1">
                   <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">NAF *</label>
-                  <input type="text" placeholder="000000" value={formData.numero_naf} onChange={(e) => handleNumericInput('numero_naf', e.target.value, 6)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-black font-black text-xs tracking-tighter" required />
+                  <input type="text" placeholder="000000" value={formData.numero_naf} onChange={(e) => handleNumericInput('numero_naf', e.target.value, 6)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-black font-bold text-xs uppercase" required />
                 </div>
                 <div className="w-20">
                   <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">SUB *</label>
-                  <input type="text" placeholder="00" value={formData.numero_subnaf} onChange={(e) => handleNumericInput('numero_subnaf', e.target.value, 2)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-center text-black font-black text-xs tracking-tighter" required />
+                  <input type="text" placeholder="00" value={formData.numero_subnaf} onChange={(e) => handleNumericInput('numero_subnaf', e.target.value, 2)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-center text-black font-bold text-xs uppercase" required />
                 </div>
               </div>
               <div className="col-span-2">
@@ -337,13 +337,13 @@ const Nafs: React.FC = () => {
               </div>
               <div className="col-span-2">
                 <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Valor Unitário *</label>
-                <input type="text" placeholder="R$ 0,00" value={formData.valor} onChange={(e) => handleCurrencyInput(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-blue-600 font-black text-sm" required />
+                <input type="text" placeholder="R$ 0,00" value={formData.valor} onChange={(e) => handleCurrencyInput(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-black font-bold text-xs uppercase" required />
               </div>
               <div className="col-span-2">
                 <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Observação</label>
-                <textarea value={formData.observacao} onChange={(e) => setFormData({...formData, observacao: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl h-24 resize-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 outline-none text-black text-xs italic" />
+                <textarea value={formData.observacao} onChange={(e) => setFormData({...formData, observacao: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl h-24 resize-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 outline-none text-black font-bold text-xs uppercase" />
               </div>
-              {formError && <div className="col-span-2 text-red-600 text-[10px] font-black uppercase text-center">{formError}</div>}
+              {formError && <div className="col-span-2 text-red-600 text-[10px] font-black uppercase text-center bg-red-50 p-3 rounded-xl">{formError}</div>}
               <div className="col-span-2 flex space-x-3 pt-4">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-4 text-gray-400 font-black uppercase tracking-widest text-[10px] hover:text-gray-900 transition-colors">Cancelar</button>
                 <button type="submit" className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-blue-500/20 active:scale-95 transition-all">Gravar NAF</button>
