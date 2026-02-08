@@ -18,7 +18,8 @@ import {
   Clock,
   ChevronRight,
   ShieldAlert,
-  Book
+  Book,
+  CalendarClock
 } from 'lucide-react';
 import { supabase } from './supabase';
 import { SystemAlert } from './types';
@@ -31,6 +32,7 @@ import Relatorios from './pages/Relatorios';
 import Admin from './pages/Admin';
 import Medicamentos from './pages/Medicamentos';
 import CadernoDigital from './pages/CadernoDigital';
+import Cobrancas from './pages/Cobrancas';
 
 const SidebarItem = ({ to, icon: Icon, label, active }: { to: string, icon: any, label: string, active: boolean }) => (
   <Link 
@@ -99,8 +101,8 @@ const AppLayout = ({ children, onLogout }: { children?: React.ReactNode, onLogou
           type: 'warning',
           category: 'protocolo',
           title: 'Protocolo Estagnado',
-          message: `NAF ${n.numero_naf} está sem baixa há mais de 10 dias.`,
-          link: '/baixas'
+          message: `NAF ${n.numero_naf} está sem baixa há 10 dias ou mais.`,
+          link: '/cobrancas'
         });
       });
 
@@ -148,7 +150,7 @@ const AppLayout = ({ children, onLogout }: { children?: React.ReactNode, onLogou
                 <div className="absolute -bottom-1 -right-1 bg-amber-400 w-3 h-3 rounded-full border-2 border-white animate-pulse"></div>
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.25em] leading-none mb-0.5">Sistema de</span>
+                <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.25em] mb-0.5">Sistema de</span>
                 <span className="font-black text-xl leading-none text-blue-900 tracking-tighter uppercase">Protocolo</span>
               </div>
             </div>
@@ -158,6 +160,7 @@ const AppLayout = ({ children, onLogout }: { children?: React.ReactNode, onLogou
             <SidebarItem to="/" icon={LayoutDashboard} label="Dashboard" active={location.pathname === '/'} />
             <SidebarItem to="/fornecedores" icon={Users} label="Fornecedores" active={location.pathname === '/fornecedores'} />
             <SidebarItem to="/nafs" icon={FileText} label="NAF's" active={location.pathname === '/nafs'} />
+            <SidebarItem to="/cobrancas" icon={CalendarClock} label="Cobranças" active={location.pathname === '/cobrancas'} />
             <SidebarItem to="/caderno" icon={Book} label="Folhear Caderno" active={location.pathname === '/caderno'} />
             <SidebarItem to="/baixas" icon={CheckCircle2} label="Baixas" active={location.pathname === '/baixas'} />
             <SidebarItem to="/medicamentos" icon={Pill} label="Medicamentos" active={location.pathname === '/medicamentos'} />
@@ -322,6 +325,7 @@ const App = () => {
           <Route path="/caderno" element={<CadernoDigital />} />
           <Route path="/fornecedores" element={<Fornecedores />} />
           <Route path="/nafs" element={<Nafs />} />
+          <Route path="/cobrancas" element={<Cobrancas />} />
           <Route path="/medicamentos" element={<Medicamentos />} />
           <Route path="/baixas" element={<Baixas />} />
           <Route path="/relatorios" element={<Relatorios />} />

@@ -59,7 +59,6 @@ const Nafs: React.FC = () => {
         }
       }
 
-      // LÓGICA DE FILA: Novos registros ficam abaixo (Ordem Ascendente por criação)
       const { data, count, error } = await query
         .order('created_at', { ascending: true })
         .range(from, to);
@@ -290,12 +289,16 @@ const Nafs: React.FC = () => {
                 </div>
                 <div>
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Identificador</label>
-                  <p className="font-black text-blue-600 text-lg tracking-tighter">#{viewingNaf.numero_naf} / {viewingNaf.numero_subnaf}</p>
+                  <p className="font-black text-gray-800 text-lg tracking-tighter">#{viewingNaf.numero_naf} / {viewingNaf.numero_subnaf}</p>
+                </div>
+                <div className="col-span-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Valor Total</label>
+                  <p className="font-black text-emerald-600 text-lg tracking-tighter">{formatCurrency(viewingNaf.valor)}</p>
                 </div>
               </div>
               <div className="p-5 bg-gray-50 rounded-[2rem] border border-gray-100">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2 ml-1">Notas e Observações</label>
-                <p className="text-xs italic text-gray-600 leading-relaxed">"{viewingNaf.observacao || 'Nenhum detalhe adicional registrado.'}"</p>
+                <p className="text-xs font-bold uppercase text-gray-600 leading-relaxed">"{viewingNaf.observacao || 'Nenhum detalhe adicional registrado.'}"</p>
               </div>
               <div className="flex justify-end pt-4">
                 <button onClick={() => setIsViewModalOpen(false)} className="bg-blue-600 text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-500/20 active:scale-95 transition-all">Fechar Dossiê</button>
@@ -314,11 +317,11 @@ const Nafs: React.FC = () => {
               <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-900 transition-colors"><X size={24} /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-8 grid grid-cols-2 gap-5">
-              <div className="col-span-1">
+              <div className="col-span-2">
                 <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Data Entrada *</label>
                 <input type="date" value={formData.data_entrada} onChange={(e) => setFormData({...formData, data_entrada: e.target.value})} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-black font-bold text-xs uppercase" required />
               </div>
-              <div className="col-span-1 flex space-x-2">
+              <div className="col-span-2 flex space-x-2">
                 <div className="flex-1">
                   <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">NAF *</label>
                   <input type="text" placeholder="000000" value={formData.numero_naf} onChange={(e) => handleNumericInput('numero_naf', e.target.value, 6)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600/50 focus:outline-none text-black font-bold text-xs uppercase" required />

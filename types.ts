@@ -11,6 +11,7 @@ export interface Fornecedor {
 export interface NAF {
   id: string;
   data_entrada: string;
+  data_cobranca?: string | null;
   numero_naf: string; // Up to 6 digits
   numero_subnaf: string; // Up to 2 digits
   fornecedor_id: string;

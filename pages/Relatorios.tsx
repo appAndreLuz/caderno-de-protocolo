@@ -82,7 +82,7 @@ const Relatorios: React.FC = () => {
     { id: 3, label: "Sem Saídas", description: "Itens aguardando baixa", icon: FileX2, color: "text-amber-600", bg: "bg-amber-50" },
     { id: 4, label: "Críticos ≤ 30d", description: "Vencimentos imediatos", icon: AlertCircle, color: "text-red-600", bg: "bg-red-50" },
     { id: 5, label: "Monitoramento", description: "Vencimentos entre 31-60 dias", icon: Clock, color: "text-orange-600", bg: "bg-orange-50" },
-    { id: 6, label: "Atraso Entrega", description: "Protocolos parados >10 dias", icon: Truck, color: "text-purple-600", bg: "bg-purple-50" },
+    { id: 6, label: "Atraso Entrega", description: "Protocolos parados há 10 dias ou mais", icon: Truck, color: "text-purple-600", bg: "bg-purple-50" },
   ];
 
   useEffect(() => {
