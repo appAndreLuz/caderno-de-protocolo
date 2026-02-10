@@ -190,6 +190,11 @@ const Cobrancas: React.FC = () => {
                   let statusColor = 'text-blue-600';
                   let dotColor = 'bg-blue-400';
                   let statusLabel = `${days} Dias`;
+                  
+                  const refDateFormatted = formatDate(n.data_cobranca || n.data_entrada);
+                  const tooltipText = n.data_cobranca 
+                    ? `Contagem baseada na última cobrança: ${refDateFormatted}` 
+                    : `Contagem baseada na data de entrada: ${refDateFormatted}`;
 
                   if (isBaixada) {
                     statusColor = 'text-gray-400';
@@ -212,7 +217,10 @@ const Cobrancas: React.FC = () => {
                   return (
                     <tr key={n.id} className={`hover:bg-gray-50/50 transition-colors ${!isBaixada && days >= 10 ? 'bg-amber-50/10' : ''} ${isBaixada ? 'opacity-70 grayscale-[0.5]' : ''}`}>
                       <td className="px-8 py-4">
-                        <div className="flex items-center space-x-2">
+                        <div 
+                          className="flex items-center space-x-2 cursor-help" 
+                          title={!isBaixada ? tooltipText : `Finalizada em ${formatDate(n.data_baixa)}`}
+                        >
                           <div className={`w-2 h-2 rounded-full ${dotColor}`}></div>
                           <span className={`font-black uppercase tracking-tighter ${statusColor}`}>
                             {statusLabel}
@@ -245,14 +253,14 @@ const Cobrancas: React.FC = () => {
                             onClick={() => handleMarkAsCobrado(n)}
                             disabled={isBaixada}
                             className={`p-2 rounded-xl transition-all active:scale-90 ${isBaixada ? 'text-gray-200 cursor-not-allowed' : 'text-emerald-600 hover:bg-emerald-50'}`}
-                            title="Cobrado Hoje"
+                            title="Registrar cobrança realizada hoje"
                           >
                             <CheckCircle size={18} />
                           </button>
                           <button 
                             onClick={() => openDateModal(n)}
                             className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all active:scale-90"
-                            title="Alterar Data de Cobrança"
+                            title="Retroceder ou alterar data de cobrança manualmente"
                           >
                             <Calendar size={18} />
                           </button>
