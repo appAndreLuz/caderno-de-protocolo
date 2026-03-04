@@ -1,59 +1,68 @@
 
-export interface Fornecedor {
+import { LucideIcon } from 'lucide-react';
+
+export interface Psalm {
+  id: number;
+  number: number;
+  text: string;
+}
+
+export interface Supplier {
   id: string;
-  razao_social: string;
-  documento: string; // CNPJ or CPF
-  telefone: string;
-  email: string;
-  created_at?: string;
+  name: string;
+  document: string;
+  email?: string;
+  phone?: string;
+  created_at: string;
+}
+
+export interface Medicine {
+  id: string;
+  codigo_medicamento: string;
+  nome_medicamento: string;
+  lote: string;
+  data_validade: string;
+  created_at: string;
+  // Campos calculados no "back-end" (service)
+  status_validade?: 'critico' | 'atencao' | 'em_dia';
+  dias_para_vencer?: number;
 }
 
 export interface NAF {
   id: string;
-  data_entrada: string;
+  created_at: string;
+  entry_date: string;
+  data_saida?: string | null;
   data_cobranca?: string | null;
-  numero_naf: string; // Up to 6 digits
-  numero_subnaf: string; // Up to 2 digits
-  fornecedor_id: string;
-  valor: number;
-  observacao: string;
-  data_baixa?: string | null;
-  created_at?: string;
-  page_number?: number; // Calculated field
-  fornecedor?: Fornecedor;
+  naf_number: string;
+  subnaf_number: string;
+  supplier_id: string;
+  value: number;
+  observation?: string;
+  page_number: number;
+  line_number: number;
+  is_cancelled?: boolean;
+  // Virtual/Computed fields for UI
+  dias_parados?: number;
+  pode_cobrar?: boolean;
+  // Join data
+  suppliers?: {
+    name: string;
+  };
 }
 
-export interface Medicamento {
+export interface MenuItem {
   id: string;
-  codigo: string;
-  nome: string;
-  lote: string;
-  validade: string;
-  quantidade?: number;
-  created_at?: string;
+  label: string;
+  icon: LucideIcon;
+  path: string;
+  category?: string;
 }
 
-// Added Emprestimo interface to fix import error in pages/Emprestimos.tsx
-export interface Emprestimo {
-  id: string;
-  numero_sequencial: number;
-  fornecedor_nome: string;
-  item_nome: string;
-  data_emprestimo: string;
-  observacoes?: string;
-  created_at?: string;
-}
-
-export interface User {
-  username: string;
-  isAuthenticated: boolean;
-}
-
-export interface SystemAlert {
-  id: string;
-  type: 'critical' | 'warning' | 'info';
-  title: string;
-  message: string;
-  category: 'medicamento' | 'protocolo' | 'sistema';
-  link: string;
+export enum ThemeColors {
+  CREAM = '#F8F8EC',
+  LIME = '#AEDD2B',
+  BLUE_PRIMARY = '#066699',
+  BLUE_DARK = '#0A5483',
+  BLUE_DEEP = '#02416D',
 }

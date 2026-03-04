@@ -1,5 +1,7 @@
 {
-  "name": "Caderno de Protocolo",
-  "description": "Sistema de gestão de protocolos de NAFs e fornecedores com lógica de caderno de 100 páginas.",
-  "requestFramePermissions": []
+  "name": "ProtoCaderno - Gestão de Protocolo",
+  "description": "Dashboard administrativa segura para gestão de protocolos, fornecedores e relatórios, com acesso restrito e interface institucional otimizada.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
 }
